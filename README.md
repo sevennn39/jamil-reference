@@ -7,8 +7,8 @@ Fun little mini-app thing I made to practice Python. Has a few different functio
 How to run: Go into the project (the codespace) and click the run button in the top right!
 
 Features:
-> High Card Low Card game
-> Coin Flip game
-> Small database of fun facts
-> Mini-quiz (3 questions)
-> Predictions for how your day will go
+High Card Low Card game
+Coin Flip game
+Small database of fun facts
+Mini-quiz (3 questions)
+Predictions for how your day will go
