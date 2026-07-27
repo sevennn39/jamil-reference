@@ -1,0 +1,2 @@
+#storing fun facts for later! (i don't think I ended up using this...)
+fun_facts = ["Cat urine glows under a blacklight.","A shrimp's heart is in its head.", "Dreamt is the only English word that ends in the letters mt.", "A dime has 118 ridges around the edge.", "A crocodile cannot stick its tongue out.", "The 'sixth sick sheik's sixth sheep's sick' is believed to be the toughest tongue twister in the English language."]
