@@ -1,18 +1,18 @@
 # jamil-reference
-37039
-Fun little mini-app thing I made to practice Python. Has a few different functions.
+
+37039 is a small games app built with NestJS. It includes High Card, Low Card, Coin Flip, Fun Facts, a three-question quiz, and daily predictions.
 
 <img width="1913" height="978" alt="image" src="https://github.com/user-attachments/assets/6ac0dd10-f3d4-4ecb-829c-7cc770e3d8dc" />
 
-How to run: Go into the project (the codespace) and click the run button in the top right!
+## Run locally
 
-Features:
-High Card Low Card game
+Install the dependencies and start the development server:
 
-Coin Flip game
+```bash
+npm install
+npm run start:dev
+```
 
-Small database of fun facts
+Open http://localhost:3000 in a browser.
 
-Mini-quiz (3 questions)
-
-Predictions for how your day will go
+The old Python and Streamlit files are kept in the repository as reference, but the app now runs through NestJS.
