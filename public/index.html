@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>37039 Games</title>
+  <style>
+    :root { color-scheme: light; font-family: Georgia, serif; background: #f4efe6; color: #18251e; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: radial-gradient(circle at top right, #e8d8bd, transparent 35%), #f4efe6; }
+    main { width: min(760px, 92vw); margin: 0 auto; padding: 8vh 0 12vh; }
+    .eyebrow { color: #a4492f; letter-spacing: .15em; text-transform: uppercase; font: 700 12px Arial, sans-serif; }
+    h1 { margin: 10px 0 8px; font-size: clamp(42px, 9vw, 76px); line-height: .95; }
+    .intro { margin: 0 0 30px; font: 18px/1.5 Arial, sans-serif; color: #58655c; }
+    .games { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+    button { border: 2px solid #18251e; border-radius: 4px; padding: 12px 16px; background: #fffaf0; color: #18251e; cursor: pointer; font: 700 14px Arial, sans-serif; }
+    button:hover, button.active { background: #18251e; color: #fffaf0; }
+    section { border-top: 1px solid #b8ac99; padding-top: 24px; }
+    label { display: block; margin: 13px 0 5px; font: 700 13px Arial, sans-serif; }
+    input { width: 100%; border: 1px solid #b8ac99; border-radius: 3px; padding: 12px; background: #fffaf0; font: 16px Georgia, serif; }
+    .actions { margin-top: 18px; }
+    #output { min-height: 28px; margin-top: 22px; font: 20px/1.45 Georgia, serif; }
+    .score { color: #a4492f; font-weight: 700; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">A tiny collection of diversions</div>
+    <h1>37039</h1>
+    <p class="intro">Choose a game.</p>
+    <nav class="games" aria-label="Games">
+      <button data-game="high-low">High Card, Low Card</button>
+      <button data-game="coin-flip">Coin Flip</button>
+      <button data-game="fun-fact">Fun Facts</button>
+      <button data-game="quiz">Quiz</button>
+      <button data-game="prediction">Predictions</button>
+    </nav>
+    <section id="panel"></section>
+    <div id="output" aria-live="polite"></div>
+  </main>
+  <script>
+    const panel = document.querySelector('#panel');
+    const output = document.querySelector('#output');
+    const buttons = document.querySelectorAll('[data-game]');
+    const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+
+    function show(game) {
+      buttons.forEach((button) => button.classList.toggle('active', button.dataset.game === game));
+      output.textContent = '';
+      if (game === 'quiz') {
+        panel.innerHTML = '<label>What is the capital of Australia?</label><input id="one"><label>What is 12 x 29?</label><input id="two"><label>What is the powerhouse of the cell?</label><input id="three"><div class="actions"><button id="submit">Check my answers</button></div>';
+        document.querySelector('#submit').onclick = async () => {
+          const result = await request('/api/games/quiz', 'POST', { questionOne: one.value, questionTwo: two.value, questionThree: three.value });
+          output.innerHTML = `<span class="score">Total Score: ${result.score}/3</span><br>${result.results.map((item) => escapeHtml(item.message)).join('<br>')}`;
+        };
+      } else if (game === 'high-low') {
+        panel.innerHTML = '<p>Guess whether the next number will be higher or lower.</p><button id="higher">Higher</button> <button id="lower">Lower</button>';
+        document.querySelector('#higher').onclick = () => playHighLow('Higher');
+        document.querySelector('#lower').onclick = () => playHighLow('Lower');
+      } else {
+        panel.innerHTML = `<button id="play">${game === 'coin-flip' ? 'Flip coin' : game === 'fun-fact' ? 'Show a fact' : 'Get prediction'}</button>`;
+        document.querySelector('#play').onclick = async () => {
+          const result = await request(`/api/games/${game}`);
+          output.textContent = result.result || result.fact || result.prediction;
+        };
+      }
+    }
+
+    async function playHighLow(guess) {
+      const result = await request('/api/games/high-low', 'POST', { guess });
+      output.textContent = `${result.message} ${result.correct ? 'Correct!' : 'Not this time.'}`;
+    }
+
+    async function request(url, method = 'GET', body) {
+      const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: body && JSON.stringify(body) });
+      if (!response.ok) throw new Error('Request failed');
+      return response.json();
+    }
+
+    buttons.forEach((button) => button.addEventListener('click', () => show(button.dataset.game)));
+    show('coin-flip');
+  </script>
+</body>
+</html>
